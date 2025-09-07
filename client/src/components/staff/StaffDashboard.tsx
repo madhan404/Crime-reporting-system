@@ -38,8 +38,12 @@ const StaffDashboard: React.FC = () => {
 
   const fetchStaffStats = async () => {
     try {
+      const token = localStorage.getItem('token');
       const response = await fetch(`${getApiBaseUrl()}/staff/dashboard-stats`, {
         credentials: 'include',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
 
       if (response.ok) {

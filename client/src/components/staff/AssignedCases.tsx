@@ -75,8 +75,12 @@ const AssignedCases: React.FC = () => {
         if (value) params.append(key, value);
       });
 
+      const token = localStorage.getItem('token');
       const response = await fetch(`${getApiBaseUrl()}/complaints?${params}`, {
         credentials: 'include',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
 
       if (response.ok) {
@@ -93,8 +97,12 @@ const AssignedCases: React.FC = () => {
 
   const fetchCaseDetails = async (caseId: string) => {
     try {
+      const token = localStorage.getItem('token');
       const response = await fetch(`${getApiBaseUrl()}/complaints/${caseId}`, {
         credentials: 'include',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
 
       if (response.ok) {
@@ -110,10 +118,12 @@ const AssignedCases: React.FC = () => {
     if (!selectedComplaint || !statusUpdate.status) return;
 
     try {
+      const token = localStorage.getItem('token');
       const response = await fetch(`${getApiBaseUrl()}/complaints/${selectedComplaint.caseId}/status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         credentials: 'include',
         body: JSON.stringify(statusUpdate),
