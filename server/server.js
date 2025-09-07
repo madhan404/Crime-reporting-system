@@ -15,6 +15,34 @@ import complaintRoutes from './routes/complaints.js';
 import staffRoutes from './routes/staff.js';
 import investigationRoutes from './routes/investigations.js';
 
+
+const allowedOrigins = [
+  'http://localhost:5173', 
+  'https://crimereporting-system.netlify.app'
+];
+
+// Handle CORS preflight requests and normal requests
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type','Authorization']
+}));
+
+// Handle OPTIONS preflight globally
+app.options('*', cors({
+  origin: allowedOrigins,
+  credentials: true,
+  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type','Authorization']
+}));
+
 // Load environment variables
 dotenv.config();
 
@@ -38,32 +66,7 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// CORS configuration
-const allowedOrigins = [
-  'http://localhost:5173',
-  process.env.CLIENT_URL || 'https://crimereporting-system.netlify.app'
-];
 
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
-
-// Handle preflight requests for all routes
-app.options('*', cors({
-  origin: allowedOrigins,
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
 
 
 // Body parsing middleware
