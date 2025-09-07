@@ -15,13 +15,20 @@ import complaintRoutes from './routes/complaints.js';
 import staffRoutes from './routes/staff.js';
 import investigationRoutes from './routes/investigations.js';
 
+// Load environment variables
+dotenv.config();
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const app = express(); // <-- MUST be here before middleware
+
+// CORS configuration
 const allowedOrigins = [
   'http://localhost:5173', 
   'https://crimereporting-system.netlify.app'
 ];
 
-// Handle CORS preflight requests and normal requests
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin)) {
@@ -43,14 +50,6 @@ app.options('*', cors({
   allowedHeaders: ['Content-Type','Authorization']
 }));
 
-// Load environment variables
-dotenv.config();
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const app = express();
-
 // Security middleware
 app.use(helmet({
   crossOriginResourcePolicy: false,
@@ -66,9 +65,6 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-
-
-
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
@@ -79,9 +75,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Database connection
 mongoose.connect(process.env.MONGODB_URI)
-  .then(() => {
-    console.log('✅ Connected to MongoDB');
-  })
+  .then(() => console.log('✅ Connected to MongoDB'))
   .catch((error) => {
     console.error('❌ MongoDB connection error:', error);
     process.exit(1);
@@ -94,7 +88,7 @@ app.use('/api/complaints', complaintRoutes);
 app.use('/api/staff', staffRoutes);
 app.use('/api/investigations', investigationRoutes);
 
-// Health check endpoint
+// Health check
 app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'OK', 
