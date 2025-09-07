@@ -17,7 +17,8 @@ export default defineConfig(({ mode }) => {
     server: {
       proxy: {
         '/api': {
-          target: env.VITE_API_URL, 
+          // target: env.VITE_API_URL, 
+          target: 'https://crime-reporting-system-rm5f.onrender.com',
           changeOrigin: true, 
           secure: false,
         },
