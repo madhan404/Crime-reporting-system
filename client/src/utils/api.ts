@@ -3,8 +3,8 @@ import axios from "axios";
 // Use VITE_API_URL in production, /api proxy in development
 const API_BASE_URL =
   import.meta.env.MODE === "development"
-    ? "/api" // Vite proxy for local dev
-    : import.meta.env.VITE_API_URL; // Production backend
+    ? "/api" // Vite dev proxy
+    : import.meta.env.VITE_API_URL; // e.g., https://crime-reporting-system-rm5f.onrender.com
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -12,6 +12,7 @@ const api = axios.create({
     "Content-Type": "application/json",
   },
 });
+
 
 // Request interceptor to add auth token
 api.interceptors.request.use(
