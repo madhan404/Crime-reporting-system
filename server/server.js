@@ -39,16 +39,32 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // CORS configuration
+const allowedOrigins = [
+  'http://localhost:5173',
+  process.env.CLIENT_URL || 'https://crimereporting-system.netlify.app'
+];
+
 app.use(cors({
-    origin: (origin, callback) => {
-    const allowed = [process.env.CLIENT_URL, 'http://localhost:5173'];
-    if (!origin || allowed.includes(origin)) callback(null, true);
-    else callback(new Error("Not allowed by CORS"));
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
+// Handle preflight requests for all routes
+app.options('*', cors({
+  origin: allowedOrigins,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
