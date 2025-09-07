@@ -27,7 +27,12 @@ const PORT = process.env.PORT || 5001;
 // CORS configuration - must come before other middleware
 const corsOrigins = process.env.CORS_ORIGIN 
   ? process.env.CORS_ORIGIN.split(',')
-  : ['http://localhost:5173', 'http://localhost:3000', 'http://127.0.0.1:5173'];
+  : [
+      'http://localhost:5173', 
+      'http://localhost:3000', 
+      'http://127.0.0.1:5173',
+      'https://crimereporting-system.netlify.app'
+    ];
 
 app.use(cors({
   origin: corsOrigins,
