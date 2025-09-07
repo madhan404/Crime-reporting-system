@@ -21,18 +21,24 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const app = express(); // <-- MUST be here before middleware
+const app = express();
 
-// CORS configuration
+// Allowed origins for CORS
 const allowedOrigins = [
-  'http://localhost:5173', 
+  'http://localhost:5173',
   'https://crimereporting-system.netlify.app'
 ];
 
-// Use this **before all routes**
+// CORS middleware
 app.use(cors({
-  origin: allowedOrigins,
-  credentials: true, // allows cookies/auth headers
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('CORS: Origin not allowed'));
+    }
+  },
+  credentials: true,
   methods: ['GET','POST','PUT','DELETE','OPTIONS'],
   allowedHeaders: ['Content-Type','Authorization']
 }));
@@ -40,43 +46,35 @@ app.use(cors({
 // Handle preflight OPTIONS requests globally
 app.options('*', cors({
   origin: allowedOrigins,
-  credentials: true
+  credentials: true,
+  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type','Authorization']
 }));
-
-app.use((req, res, next) => {
-  console.log('Origin:', req.headers.origin);
-  next();
-});
-
 
 // Security middleware
-app.use(helmet({
-  crossOriginResourcePolicy: false,
-}));
+app.use(helmet({ crossOriginResourcePolicy: false }));
 
 // Rate limiting
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-  message: {
-    error: 'Too many requests from this IP, please try again later.'
-  }
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: { error: 'Too many requests from this IP, try again later.' }
 });
 app.use(limiter);
 
-// Body parsing middleware
+// Body parser
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser());
 
-// Static files for uploads
+// Static uploads folder
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Database connection
+// MongoDB connection
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('✅ Connected to MongoDB'))
-  .catch((error) => {
-    console.error('❌ MongoDB connection error:', error);
+  .catch(err => {
+    console.error('❌ MongoDB connection error:', err);
     process.exit(1);
   });
 
@@ -89,31 +87,32 @@ app.use('/api/investigations', investigationRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'OK', 
+  res.json({
+    status: 'OK',
     message: 'Crime Management System API is running',
     timestamp: new Date().toISOString()
   });
 });
 
 // Global error handler
-app.use((error, req, res, next) => {
-  console.error('Error:', error);
-  res.status(error.statusCode || 500).json({
-    error: error.message || 'Internal Server Error',
-    ...(process.env.NODE_ENV === 'development' && { stack: error.stack })
+app.use((err, req, res, next) => {
+  console.error('Error:', err);
+  res.status(err.statusCode || 500).json({
+    error: err.message || 'Internal Server Error',
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
   });
 });
 
-// 404 handler
+// 404 fallback
 app.use('*', (req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 5001;
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`🌍 Environment: ${process.env.NODE_ENV}`);
   console.log(`📊 API Health: http://localhost:${PORT}/api/health`);
+  console.log(`🔗 CORS Origins: ${allowedOrigins.join(', ')}`);
 });
