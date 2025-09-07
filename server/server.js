@@ -29,27 +29,23 @@ const allowedOrigins = [
   'https://crimereporting-system.netlify.app'
 ];
 
-// CORS middleware
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('CORS: Origin not allowed'));
-    }
-  },
-  credentials: true,
-  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
-  allowedHeaders: ['Content-Type','Authorization']
-}));
+// CORS middleware - explicit with dynamic origin and proper preflight handling
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+    res.header('Vary', 'Origin'); // Prevent caching varying by origin
+  }
+  res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+  res.header('Access-Control-Allow-Credentials', 'true');
 
-// Handle preflight OPTIONS requests globally
-app.options('*', cors({
-  origin: allowedOrigins,
-  credentials: true,
-  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
-  allowedHeaders: ['Content-Type','Authorization']
-}));
+  if (req.method === 'OPTIONS') {
+    // Respond to preflight request
+    return res.sendStatus(204);
+  }
+  next();
+});
 
 // Security middleware
 app.use(helmet({ crossOriginResourcePolicy: false }));
