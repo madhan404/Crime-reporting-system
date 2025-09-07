@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Plus, MapPin, Upload, X, AlertCircle, CheckCircle } from 'lucide-react';
+import { getApiBaseUrl } from '../../utils/api';
 
 interface FileComplaintFormProps {
   onComplaintFiled: () => void;
@@ -169,7 +170,7 @@ const FileComplaintForm: React.FC<FileComplaintFormProps> = ({ onComplaintFiled 
       });
 
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/complaints/file', {
+      const response = await fetch(`${getApiBaseUrl()}/complaints/file`, {
         method: 'POST',
         credentials: 'include',
         headers: {

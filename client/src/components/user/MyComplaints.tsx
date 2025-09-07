@@ -7,6 +7,7 @@ import {
   User,
   FileText
 } from 'lucide-react';
+import { getApiBaseUrl } from '../../utils/api';
 
 interface Complaint {
   _id: string;
@@ -58,7 +59,7 @@ const MyComplaints: React.FC = () => {
       if (filters.search) params.append('search', filters.search);
 
       const token = localStorage.getItem('token');
-      const response = await fetch(`/api/complaints/my-complaints?${params}`, {
+      const response = await fetch(`${getApiBaseUrl()}/complaints/my-complaints?${params}`, {
         credentials: 'include',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -80,7 +81,7 @@ const MyComplaints: React.FC = () => {
   const fetchComplaintDetails = async (caseId: string) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`/api/complaints/${caseId}`, {
+      const response = await fetch(`${getApiBaseUrl()}/complaints/${caseId}`, {
         credentials: 'include',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -230,7 +231,7 @@ const MyComplaints: React.FC = () => {
       try {
         setLoading(true);
         const token = localStorage.getItem('token');
-        const response = await fetch(`/api/investigations/case/${caseId}`, {
+        const response = await fetch(`${getApiBaseUrl()}/investigations/case/${caseId}`, {
           credentials: 'include',
           headers: {
             'Authorization': `Bearer ${token}`

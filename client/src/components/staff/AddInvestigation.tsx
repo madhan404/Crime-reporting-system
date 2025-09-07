@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, X, MapPin, Upload, CheckCircle, AlertCircle } from 'lucide-react';
+import { getApiBaseUrl } from '../../utils/api';
 
 interface AddInvestigationProps {
   onInvestigationAdded: () => void;
@@ -56,7 +57,7 @@ const AddInvestigation: React.FC<AddInvestigationProps> = ({ onInvestigationAdde
   const fetchAssignedCases = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/complaints?limit=100', {
+      const response = await fetch(`${getApiBaseUrl()}/complaints?limit=100`, {
         credentials: 'include',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -221,7 +222,7 @@ const AddInvestigation: React.FC<AddInvestigationProps> = ({ onInvestigationAdde
       });
 
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/investigations', {
+      const response = await fetch(`${getApiBaseUrl()}/investigations`, {
         method: 'POST',
         credentials: 'include',
         headers: {

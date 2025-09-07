@@ -1,13 +1,15 @@
 import axios from "axios";
 
 // Use VITE_API_URL in production, /api proxy in development
-// const API_BASE_URL =
-//   import.meta.env.MODE === "development"
-//     ? "/api" // Vite dev proxy
-//     : import.meta.env.VITE_API_URL; // e.g., https://crime-reporting-system-rm5f.onrender.com
+const API_BASE_URL = import.meta.env.VITE_API_URL || "https://crime-reporting-system-rm5f.onrender.com/api";
+
+// Debug logging
+console.log("API Base URL:", API_BASE_URL);
+console.log("Environment:", import.meta.env.MODE);
+console.log("VITE_API_URL:", import.meta.env.VITE_API_URL);
 
 const api = axios.create({
-  baseURL: "https://crime-reporting-system-rm5f.onrender.com/api"  ,
+  baseURL: API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
@@ -37,5 +39,10 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+// Utility function to get the correct API base URL
+export const getApiBaseUrl = () => {
+  return import.meta.env.VITE_API_URL || "https://crime-reporting-system-rm5f.onrender.com/api";
+};
 
 export { api };

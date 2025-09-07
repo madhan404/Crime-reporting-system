@@ -12,6 +12,7 @@ import {
   Phone,
   MapPin
 } from 'lucide-react';
+import { getApiBaseUrl } from '../../utils/api';
 
 interface Staff {
   _id: string;
@@ -67,7 +68,7 @@ const ManageStaff: React.FC = () => {
       if (statusFilter) params.append('status', statusFilter);
 
       const token = localStorage.getItem('token');
-      const response = await fetch(`/api/staff?${params}`, {
+      const response = await fetch(`${getApiBaseUrl()}/staff?${params}`, {
         credentials: 'include',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -89,7 +90,7 @@ const ManageStaff: React.FC = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/staff/add', {
+      const response = await fetch(`${getApiBaseUrl()}/staff/add`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -116,7 +117,7 @@ const ManageStaff: React.FC = () => {
     try {
       const { password, ...updateData } = formData;
       const token = localStorage.getItem('token');
-      const response = await fetch(`/api/staff/${selectedStaff._id}`, {
+      const response = await fetch(`${getApiBaseUrl()}/staff/${selectedStaff._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -142,7 +143,7 @@ const ManageStaff: React.FC = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`/api/staff/${staffId}`, {
+      const response = await fetch(`${getApiBaseUrl()}/staff/${staffId}`, {
         method: 'DELETE',
         credentials: 'include',
         headers: {

@@ -10,6 +10,7 @@ import {
   MapPin,
   Clock
 } from 'lucide-react';
+import { getApiBaseUrl } from '../../utils/api';
 
 interface Complaint {
   _id: string;
@@ -74,7 +75,7 @@ const AssignedCases: React.FC = () => {
         if (value) params.append(key, value);
       });
 
-      const response = await fetch(`/api/complaints?${params}`, {
+      const response = await fetch(`${getApiBaseUrl()}/complaints?${params}`, {
         credentials: 'include',
       });
 
@@ -92,7 +93,7 @@ const AssignedCases: React.FC = () => {
 
   const fetchCaseDetails = async (caseId: string) => {
     try {
-      const response = await fetch(`/api/complaints/${caseId}`, {
+      const response = await fetch(`${getApiBaseUrl()}/complaints/${caseId}`, {
         credentials: 'include',
       });
 
@@ -109,7 +110,7 @@ const AssignedCases: React.FC = () => {
     if (!selectedComplaint || !statusUpdate.status) return;
 
     try {
-      const response = await fetch(`/api/complaints/${selectedComplaint.caseId}/status`, {
+      const response = await fetch(`${getApiBaseUrl()}/complaints/${selectedComplaint.caseId}/status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

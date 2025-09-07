@@ -11,6 +11,7 @@ import {
   AlertCircle,
   CheckCircle
 } from 'lucide-react';
+import { getApiBaseUrl } from '../../utils/api';
 
 interface Complaint {
   _id: string;
@@ -88,7 +89,7 @@ const ManageComplaints: React.FC = () => {
       });
 
       const token = localStorage.getItem('token');
-      const response = await fetch(`/api/complaints?${params}`, {
+      const response = await fetch(`${getApiBaseUrl()}/complaints?${params}`, {
         credentials: 'include',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -110,7 +111,7 @@ const ManageComplaints: React.FC = () => {
   const fetchStaff = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/staff?status=active', {
+      const response = await fetch(`${getApiBaseUrl()}/staff?status=active`, {
         credentials: 'include',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -129,7 +130,7 @@ const ManageComplaints: React.FC = () => {
   const fetchComplaintDetails = async (caseId: string) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`/api/complaints/${caseId}`, {
+      const response = await fetch(`${getApiBaseUrl()}/complaints/${caseId}`, {
         credentials: 'include',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -150,7 +151,7 @@ const ManageComplaints: React.FC = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`/api/complaints/${selectedComplaint.caseId}/assign`, {
+      const response = await fetch(`${getApiBaseUrl()}/complaints/${selectedComplaint.caseId}/assign`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -216,7 +217,7 @@ const ManageComplaints: React.FC = () => {
       try {
         setLoading(true);
         const token = localStorage.getItem('token');
-        const response = await fetch(`/api/investigations/case/${caseId}`, {
+        const response = await fetch(`${getApiBaseUrl()}/investigations/case/${caseId}`, {
           credentials: 'include',
           headers: {
             'Authorization': `Bearer ${token}`

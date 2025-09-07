@@ -13,6 +13,7 @@ import {
   Plus,
   AlertTriangle
 } from 'lucide-react';
+import { getApiBaseUrl } from '../../utils/api';
 
 interface DashboardStats {
   totalComplaints: number;
@@ -37,7 +38,7 @@ const UserDashboard: React.FC = () => {
   const fetchDashboardStats = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/users/dashboard-stats', {
+      const response = await fetch(`${getApiBaseUrl()}/users/dashboard-stats`, {
         credentials: 'include',
         headers: {
           'Authorization': `Bearer ${token}`

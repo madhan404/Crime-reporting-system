@@ -14,6 +14,7 @@ import {
   CheckCircle,
   AlertTriangle
 } from 'lucide-react';
+import { getApiBaseUrl } from '../../utils/api';
 
 interface AdminStats {
   totalUsers: number;
@@ -42,7 +43,7 @@ const AdminDashboard: React.FC = () => {
   const fetchAdminStats = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/users/admin-stats', {
+      const response = await fetch(`${getApiBaseUrl()}/users/admin-stats`, {
         credentials: 'include',
         headers: {
           'Authorization': `Bearer ${token}`

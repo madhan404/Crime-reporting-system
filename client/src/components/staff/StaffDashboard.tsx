@@ -13,6 +13,7 @@ import {
   AlertTriangle,
   BarChart3
 } from 'lucide-react';
+import { getApiBaseUrl } from '../../utils/api';
 
 interface StaffStats {
   totalAssigned: number;
@@ -37,7 +38,7 @@ const StaffDashboard: React.FC = () => {
 
   const fetchStaffStats = async () => {
     try {
-      const response = await fetch('/api/staff/dashboard-stats', {
+      const response = await fetch(`${getApiBaseUrl()}/staff/dashboard-stats`, {
         credentials: 'include',
       });
 
