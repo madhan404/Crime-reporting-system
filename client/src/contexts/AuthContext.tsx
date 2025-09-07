@@ -22,8 +22,6 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export { AuthContext };
-
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
@@ -50,31 +48,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = async (email: string, password: string) => {
-    try {
-      const response = await api.post('/auth/login', { email, password });
-      const { token: newToken, user: newUser } = response.data;
-      
-      setToken(newToken);
-      setUser(newUser);
-      localStorage.setItem('token', newToken);
-      api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
-    } catch (error: any) {
-      throw new Error(error.response?.data?.message || 'Login failed');
-    }
+    const response = await api.post('/auth/login', { email, password });
+    const { token: newToken, user: newUser } = response.data;
+    setToken(newToken);
+    setUser(newUser);
+    localStorage.setItem('token', newToken);
+    api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
   };
 
   const register = async (userData: any) => {
-    try {
-      const response = await api.post('/auth/register', userData);
-      const { token: newToken, user: newUser } = response.data;
-      
-      setToken(newToken);
-      setUser(newUser);
-      localStorage.setItem('token', newToken);
-      api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
-    } catch (error: any) {
-      throw new Error(error.response?.data?.message || 'Registration failed');
-    }
+    const response = await api.post('/auth/register', userData);
+    const { token: newToken, user: newUser } = response.data;
+    setToken(newToken);
+    setUser(newUser);
+    localStorage.setItem('token', newToken);
+    api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
   };
 
   const logout = () => {
@@ -93,8 +81,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
+  if (!context) throw new Error('useAuth must be used within an AuthProvider');
   return context;
 }
